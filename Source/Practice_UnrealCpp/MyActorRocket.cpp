@@ -14,11 +14,23 @@ AMyActorRocket::AMyActorRocket()
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	RootComponent = Box;
-	Box->SetWorldRotation(FRotator(90.0f, 0, 0));
+	Box->SetBoxExtent(FVector(27.0f, 12.0f, 10.0f));
 
 	Rocket = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rocket"));
+	Rocket->SetupAttachment(Box);
+	Rocket->SetRelativeRotation(FRotator(-90.0f, 0, 0));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_Rocket(TEXT("/Script/Engine.StaticMesh'/Game/Meshs/SM_Rocket.SM_Rocket'"));
+	if (SM_Rocket.Succeeded())
+	{
+		Rocket->SetStaticMesh(SM_Rocket.Object);
+	}
+
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
+	ProjectileMovement->InitialSpeed = 1000.0f;
+	ProjectileMovement->MaxSpeed = 1000.0f;
+	ProjectileMovement->ProjectileGravityScale = 0;
+
 
 
 }

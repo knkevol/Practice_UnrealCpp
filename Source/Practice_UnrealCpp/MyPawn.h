@@ -12,6 +12,8 @@ class UArrowComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UFloatingPawnMovement;
+class UInputAction;
+struct FInputActionValue;
 
 UCLASS()
 class PRACTICE_UNREALCPP_API AMyPawn : public APawn
@@ -34,25 +36,37 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UBoxComponent> Box;
 
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UStaticMeshComponent> Body;
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UStaticMeshComponent> Left;
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UStaticMeshComponent> Right;
 
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UArrowComponent> Arrow;
 
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<USpringArmComponent> SpringArm;
 
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UCameraComponent> Camera;
 
-	UPROPERTY(BluePrintReadOnly, VisibleAnywhere, Category = "Practice")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Practice")
 	TObjectPtr<UFloatingPawnMovement> FloatingMovement;
+
+	void Fire();
+	void Pitch(float Value);
+	void Roll(float Value);
+	void EnhancedFire(const FInputActionValue& Value);
+	void EnhancedMovement(const FInputActionValue& Value);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> IA_Fire;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> IA_Movement;
+
 };

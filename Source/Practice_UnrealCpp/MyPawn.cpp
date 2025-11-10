@@ -9,7 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h" // GetWorldDeltaSeconds(GetWorld())
-//#include "MyActor.h"
+#include "MyActorRocket.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
@@ -33,13 +33,12 @@ AMyPawn::AMyPawn()
 	FloatingMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingMovement"));
 	
 	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
-	Arrow->SetupAttachment(Body);
+	Arrow->SetupAttachment(RootComponent);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
-	
 
 }
 
@@ -67,5 +66,40 @@ void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (UIC)
+	{
+		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &AMyPawn::EnhancedFire);
+		UIC->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &AMyPawn::EnhancedMovement);
+	}
+
+}
+
+void AMyPawn::Fire()
+{
+	GetWorld()->SpawnActor<AMyActorRocket>(AMyActorRocket::StaticClass(), Arrow->K2_GetComponentToWorld());
+}
+
+void AMyPawn::Pitch(float Value)
+{
+	AddActorLocalRotation(FRotator(Value * 60.0f * UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 0, 0));
+}
+
+void AMyPawn::Roll(float Value)
+{
+	AddActorLocalRotation(FRotator(0, 0, Value * 60.0f * UGameplayStatics::GetWorldDeltaSeconds(GetWorld())));
+}
+
+void AMyPawn::EnhancedFire(const FInputActionValue& Value)
+{
+	Fire();
+}
+
+void AMyPawn::EnhancedMovement(const FInputActionValue& Value)
+{
+	FVector2D WantedRotation = Value.Get<FVector2D>();
+
+	Pitch(WantedRotation.Y);
+	Roll(WantedRotation.X);
 }
 
